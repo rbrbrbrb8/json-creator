@@ -5,7 +5,7 @@ function App() {
   return (
     <div>
       <h1>bdika</h1>
-      <InputTable />
+        <InputTable />
     </div>
   );
 }

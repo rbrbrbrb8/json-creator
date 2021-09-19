@@ -1,4 +1,4 @@
-import { useState,useRef,useEffect } from 'react';
+import { useState ,useEffect, useContext } from 'react';
 import React from 'react';
 import { Grid, makeStyles, TextField } from '@material-ui/core';
 const inputsInfo = require('./inputsInfo');
@@ -14,7 +14,9 @@ function CandidateRow(props) {
   const classes = useStyles();
   const { indexInArr, test, setTest } = props;
   const rowObj = test[indexInArr];
-  const [localTest,setLocalTest] = useState(test);
+  const [localTest, setLocalTest] = useState(test);
+  const inputsInfo = useContext(props.inputsInfo);
+  console.log(inputsInfo);
 
   useEffect(() => {
     console.log('change in test');
@@ -27,6 +29,8 @@ function CandidateRow(props) {
   }
 
   const handleChange = event => {
+    inputsInfo.setValueByKey('profile', 97)
+    console.log('b', inputsInfo);
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -45,10 +49,10 @@ function CandidateRow(props) {
   return (
     <div>
       <Grid container spacing={1}>
-        {inputsInfo.map((inputInfo) => (
+        {inputsInfo.jsonFile.events.map((inputInfo) => (
           <Grid item container direction='column' alignItems='center' key={inputInfo.key} xs>
             {indexInArr === 0 ? <h5>{inputInfo.displayName}</h5> : ''}
-            <TextField type={inputInfo.type} name={inputInfo.key}  onChange={handleChange} value={test[indexInArr][inputInfo.key]} className={inputInfo.isDateTime ? classes.textField : ''}></TextField>
+            <TextField type={inputInfo.type} name={inputInfo.key} onChange={handleChange} value={test[indexInArr][inputInfo.key]} className={inputInfo.isDateTime ? classes.textField : ''}></TextField>
             <button name={inputInfo.key} onClick={printInfo}>print</button>
           </Grid>
         ))}
