@@ -1,11 +1,15 @@
 import React from 'react';
 import InputTable from './components/InputTable';
+import {EventsProvider} from './context/EventsContext';
 
 function App() {
+
   return (
     <div>
-      <h1>bdika</h1>
-        <InputTable />
+      <EventsProvider>
+        <h1>bdika</h1>
+        <InputTable/>
+      </EventsProvider>
     </div>
   );
 }

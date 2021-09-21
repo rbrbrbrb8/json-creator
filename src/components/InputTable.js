@@ -1,36 +1,33 @@
-import { useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import React from 'react';
+import { useEvents, useAddRow, useReset } from '../context/EventsContext';
 import CandidateRow from './CandidateRow';
-import InputTableHeader from './InputTableHeader';
-const inputsInfo = require('./inputsInfo');
+import { Accordion, AccordionDetails, Button } from '@material-ui/core';
+const inputsInfo = require('../info/inputsInfo');
 const FileSaver = require('file-saver');
 
-function InputTable() {
-  const [test, setTest] = useState([{ eventstatus: 10, eventlocation: 10005126 }]);
-  const inputInfoContext = React.createContext(null);
-  const addInput = () => {
-    console.log('ok')
-    setTest([...test, { eventstatus: 10, eventlocation: 10005126 }]);
-  }
+function InputTable(props) {
+  const eventsStore = useEvents();
+  const addRow = useAddRow();
+  const reset = useReset();
+  console.log(eventsStore)
   const createJson = event => {
     event.preventDefault();
     const total = {
-      events: test
+      events: eventsStore
     }
     const toDownload = JSON.stringify(total);
     const blob = new Blob([toDownload]);
-    FileSaver.saveAs(blob, 'test.json');     
-    setTest([{ eventstatus: 10, eventlocation: 10005126 }]);
+    FileSaver.saveAs(blob, 'test.json');
+    reset();
   }
   return (
     <div>
-        <inputInfoContext.Provider value={inputsInfo}>
-          {test.map((elem, i) => (
-            <CandidateRow key={i} test={test} inputsInfo={inputInfoContext} setTest={setTest} indexInArr={i} />
-          ))}
-          <button onClick={addInput}>add row</button>
-          <button type='submit' onClick={createJson}>create JSON</button>
-        </inputInfoContext.Provider>
+        {eventsStore.map((elem, i) => (
+            <CandidateRow key={i} indexInArr={i} />
+        ))}
+      <Button variant='contained' onClick={addRow}>Add Row</Button>
+      <Button variant='contained' onClick={createJson} color='primary'>Create JSON</Button>
     </div>
   );
 }

@@ -1,61 +1,90 @@
-import { useState ,useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import React from 'react';
-import { Grid, makeStyles, TextField } from '@material-ui/core';
-const inputsInfo = require('./inputsInfo');
+import { Grid, makeStyles, MenuItem, TextField } from '@material-ui/core';
+import { useEvents, useChangeEventDetails } from '../context/EventsContext';
+import {DeleteForever} from '@material-ui/icons'
+const inputsInfo = require('../info/inputsInfo');
 
 const useStyles = makeStyles((theme) => ({
-  textField:{
-    width:100
+  textField: {
+    width: 100
   }
 }))
 
 function CandidateRow(props) {
-
   const classes = useStyles();
-  const { indexInArr, test, setTest } = props;
-  const rowObj = test[indexInArr];
-  const [localTest, setLocalTest] = useState(test);
-  const inputsInfo = useContext(props.inputsInfo);
-  console.log(inputsInfo);
-
-  useEffect(() => {
-    console.log('change in test');
-  },[test])
+  const { indexInArr } = props;
+  const events = useEvents();
+  const localEvents = [...events];
+  const currentEvent = events[indexInArr];
+  const setEvents = useChangeEventDetails();
 
   const fixDate = date => {
     const extra = ':00+000:00.00'
     console.log(date + extra);
-    return date;
+    return date + extra;
+  }
+
+  const fixValue = (value, name) => {
+    console.log(name);
+    if (name === 'eventdatetime') return fixDate(value);
+    if (name === 'pnumber' || name === 'subjectcode' || name === 'candidatephone') return Number(value);
+    return value;
   }
 
   const handleChange = event => {
-    inputsInfo.setValueByKey('profile', 97)
-    console.log('b', inputsInfo);
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    rowObj[name] = (name==='eventdatetime') ? fixDate(value) : value;
-    test[indexInArr] = rowObj;
-    console.log(value);
-    setTest(test);
-  }
-  //value={test[indexInArr][inputInfo.key]}
-
-  const printInfo= event =>{
-    console.log(test[indexInArr][event.target.name])
-    console.log(event.target.name);
+    currentEvent[name] = fixValue(value, name);
+    localEvents[indexInArr] = currentEvent;
+    setEvents(localEvents);
   }
 
+  const genderOptions = [
+    {
+      value: '1',
+      label: 'זכר',
+    },
+    {
+      value: '2',
+      label: 'נקבה'
+    }
+  ]
+
+  const getDefault = type => {
+    switch (type) {
+      case 'text':
+        return '';
+      case 'number':
+        return 0;
+      case 'date':
+        return (new Date()).toLocaleDateString('fr-CA');
+      case 'datetime-local':
+        return (new Date()).toJSON().substring(0, 16);
+      case undefined:
+        return '1';
+    }
+
+  }
   return (
     <div>
       <Grid container spacing={1}>
-        {inputsInfo.jsonFile.events.map((inputInfo) => (
+        {inputsInfo.map((inputInfo) => (
           <Grid item container direction='column' alignItems='center' key={inputInfo.key} xs>
             {indexInArr === 0 ? <h5>{inputInfo.displayName}</h5> : ''}
-            <TextField type={inputInfo.type} name={inputInfo.key} onChange={handleChange} value={test[indexInArr][inputInfo.key]} className={inputInfo.isDateTime ? classes.textField : ''}></TextField>
-            <button name={inputInfo.key} onClick={printInfo}>print</button>
+            <TextField type={inputInfo.type} name={inputInfo.key} select={inputInfo.isSelect} value={events[indexInArr][inputInfo.key] || getDefault(inputInfo.type)} onChange={handleChange} className={inputInfo.isDateTime ? classes.textField : ''}>
+              {inputInfo.isSelect ? genderOptions.map(option => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              )) : undefined}
+            </TextField>
           </Grid>
         ))}
+        {/* <Grid item container direction='column' justifyContent='center' xs>
+          <DeleteForever></DeleteForever>
+        </Grid> */}
       </Grid>
     </div>
   );
