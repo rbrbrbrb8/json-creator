@@ -7,7 +7,10 @@ const inputsInfo = require('../info/inputsInfo');
 
 const useStyles = makeStyles((theme) => ({
   textField: {
-    width: 100
+    width: 150
+  },
+  rowContainer: {
+    marginBottom:20
   }
 }))
 
@@ -68,7 +71,7 @@ function CandidateRow(props) {
 
   }
   return (
-    <div>
+    <div className={classes.rowContainer}>
       <Grid container spacing={1}>
         {inputsInfo.map((inputInfo) => (
           <Grid item container direction='column' alignItems='center' key={inputInfo.key} xs>

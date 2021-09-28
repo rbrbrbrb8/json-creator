@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import React from 'react';
 import { useEvents, useAddRow, useReset } from '../context/EventsContext';
 import CandidateRow from './CandidateRow';
-import { Accordion, AccordionDetails, Button } from '@material-ui/core';
+import { Collapse, Button } from '@material-ui/core';
 const inputsInfo = require('../info/inputsInfo');
 const FileSaver = require('file-saver');
 
@@ -23,9 +23,9 @@ function InputTable(props) {
   }
   return (
     <div>
-        {eventsStore.map((elem, i) => (
-            <CandidateRow key={i} indexInArr={i} />
-        ))}
+      {eventsStore.map((elem, i) => (
+          <CandidateRow key={i} indexInArr={i} />
+      ))}
       <Button variant='contained' onClick={addRow}>Add Row</Button>
       <Button variant='contained' onClick={createJson} color='primary'>Create JSON</Button>
     </div>

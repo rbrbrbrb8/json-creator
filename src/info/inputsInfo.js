@@ -39,7 +39,6 @@ module.exports = [
   {
     key:'eventdatetime',
     type:'datetime-local',
-    isDateTime:true,
     displayName:'תאריך ושעה'
   },
   {
@@ -75,6 +74,7 @@ module.exports = [
   {
     key:'birthdate',
     type:'date',
+    isDateTime:true,
     displayName:'תאריך לידה'
   },
   {
